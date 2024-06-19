@@ -83,7 +83,7 @@
             const encodedData = urlParams.get('data');
 
             // Здесь команда не декодируется, она используется как есть
-            const activateCommand = encodedData;
+            const activateCommand = `/activate ${encodedData}`;
 
             document.getElementById('copyCommandButton').addEventListener('click', function() {
                 navigator.clipboard.writeText(activateCommand)
