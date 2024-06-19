@@ -1,12 +1,11 @@
-<!doctype html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Регистрация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Handler</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=B612:wght@400&display=swap');
 
         * {
             margin: 0;
@@ -15,16 +14,25 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 300;
+            font-family: 'B612', sans-serif;
+            font-weight: 400;
             color: #fff;
-            background-color: #000;
+            background-color: #1f1f28;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
-        #main {
-            width: 100%;
-            padding: 20px;
+        #content {
             text-align: center;
+            padding: 40px;
+            border-radius: 60px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #212134;
+            width: 80%;
+            max-width: 400px;
         }
 
         h1 {
@@ -35,40 +43,24 @@
             color: #fff;
         }
 
-        button {
+        .btn-new {
             border: 0;
             border-radius: 25px;
             margin-top: 20px;
             height: 50px;
             width: 200px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.5s ease;
             color: #fff;
-            background: #007bff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: #1e1e23;
+            box-shadow: 0 5px 15px 0 rgb(45 51 62);
         }
 
-        button:hover {
-            background: #0056b3;
-        }
-
-        input {
-            width: 90%;
-            outline: none;
-            margin: 20px auto;
-            padding: 15px 10px;
-            font-size: 16px;
-            border: 2px solid #ccc;
-            border-radius: 25px;
-            transition: border-color 0.3s ease;
-            color: #000;
-            background-color: #fff;
-        }
-
-        input:focus {
-            border-color: #007bff;
+        .btn-new:hover {
+            transform: translate(0, -3px);
+            box-shadow: 0 20px 40px 0 rgb(45 51 62);
         }
 
         #error {
@@ -78,37 +70,35 @@
     </style>
 </head>
 <body>
-<div id="main">
-    <h1>Регистрация</h1>
-    <input type="text" placeholder="Ссылка на STEAM" id="steam_url">
-    <button id="okey">Готово</button>
-    <div id="error"></div>
-</div>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-    let tg = window.Telegram.WebApp;
-    let okey = document.getElementById("okey");
-    tg.expand();
+    <div id="content">
+        <h1>Вам доступен бонус!</h1>
+        <button id="copyCommandButton" class="btn-new">Копировать команду</button>
+        <button id="openBotButton" class="btn-new">Перейти в бота</button>
+    </div>
 
-    okey.addEventListener("click", () => {
-        document.getElementById("error").innerText = '';
-        let steamUrl = document.getElementById("steam_url").value;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const botName = urlParams.get('botName');
+            const encodedData = urlParams.get('data');
 
-        if (isValidSteamUrl(steamUrl)) {
-            let data = {
-                steam: steamUrl
-            };
-            tg.sendData(JSON.stringify(data));
-            tg.close();
-        } else {
-            document.getElementById("error").innerText = 'Введите корректную ссылку на профиль Steam';
-        }
-    });
+            const decodedData = atob(encodedData);
 
-    function isValidSteamUrl(url) {
-        let regex = /^https?:\/\/steamcommunity\.com\//;
-        return regex.test(url);
-    }
-</script>
+            document.getElementById('copyCommandButton').addEventListener('click', function() {
+                const activateCommand = `/activate ${decodedData}`;
+                navigator.clipboard.writeText(activateCommand)
+                    .then(() => {
+                        alert('Команда скопирована в буфер обмена');
+                    })
+                    .catch(err => {
+                        console.error('Не удалось скопировать команду: ', err);
+                    });
+            });
+
+            document.getElementById('openBotButton').addEventListener('click', function() {
+                window.location.href = `tg://resolve?domain=${botName}`;
+            });
+        });
+    </script>
 </body>
 </html>
