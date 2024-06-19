@@ -82,10 +82,10 @@
             const botName = urlParams.get('botName');
             const encodedData = urlParams.get('data');
 
-            const decodedData = atob(encodedData);
+            // Здесь команда не декодируется, она используется как есть
+            const activateCommand = encodedData;
 
             document.getElementById('copyCommandButton').addEventListener('click', function() {
-                const activateCommand = `/activate ${decodedData}`;
                 navigator.clipboard.writeText(activateCommand)
                     .then(() => {
                         alert('Команда скопирована в буфер обмена');
