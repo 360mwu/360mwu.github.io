@@ -17,7 +17,7 @@
             font-family: 'B612', sans-serif;
             font-weight: 400;
             color: #fff;
-            background-color: #1f1f28;
+            background-color: #1b1c24;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -26,54 +26,120 @@
         }
 
         #content {
-            text-align: center;
-            padding: 40px;
-            border-radius: 60px;
+            display: flex;
+            border-radius: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: #212134;
-            width: 80%;
-            max-width: 400px;
+            background-color: #1f1f28;
+            width: 500px;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 30px;
         }
 
         h1 {
-            margin-top: 30px;
-            margin-bottom: 30px;
-            font-size: 28px;
-            font-weight: 300;
+            font-size: 30px;
+            font-weight: 700;
             color: #fff;
         }
 
         .btn-new {
             border: 0;
-            border-radius: 25px;
-            margin-top: 20px;
-            height: 50px;
-            width: 200px;
+            border-radius: 12px;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.5s ease;
-            color: #fff;
-            background: #1e1e23;
-            box-shadow: 0 5px 15px 0 rgb(45 51 62);
+            transition: .3s;
+            color: #989eca;
+            background: #363753;
+            padding: 20px;
         }
 
         .btn-new:hover {
-            transform: translate(0, -3px);
-            box-shadow: 0 20px 40px 0 rgb(45 51 62);
+            color: #b4f753;
+            background: rgb(180 247 83 / 25%);
         }
 
         #error {
             color: #dc3545;
             margin-top: 30px;
         }
+
+        #modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: #00000099;
+        }
+
+        #modal-content {
+            background-color: #1f1f28;
+            margin: 12% auto;
+            padding: 20px;
+            width: 80%;
+            width: 400px;
+            border-radius: 10px;
+            text-align: center;
+            color: #fff;
+        }
+
+        #close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #close:hover,
+        #close:focus {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #modal ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        #modal li {
+            margin: 10px 0;
+        }
+
+        .govno {
+            display: grid;
+            gap: 15px;
+        }
     </style>
 </head>
 <body>
     <div id="content">
         <h1>Вам доступен бонус!</h1>
-        <button id="copyCommandButton" class="btn-new">Копировать команду</button>
+        <div class="govno">
+        <button id="copyCommandButton" class="btn-new">Как получить приз?</button>
         <button id="openBotButton" class="btn-new">Перейти в бота</button>
+    </div>  
+    </div>
+
+    <div id="modal">
+        <div id="modal-content">
+            <span id="close">&times;</span>
+            <h2>Инструкции</h2>
+            <ul>
+                <li>1. Скопируйте команду</li>
+                <li>2. Перейдите в бота</li>
+                <li>3. Вставьте команду в бота</li>
+                <li>4. Введите ссылку на свой STEAM</li>
+                <li>5. Получите приз!</li>
+            </ul>
+            <button class="btn-new" id="confirmButton">Скопировать команду</button>
+        </div>
     </div>
 
     <script>
@@ -82,17 +148,35 @@
             const botName = urlParams.get('botName');
             const encodedData = urlParams.get('data');
 
-            // Здесь команда не декодируется, она используется как есть
+
             const activateCommand = `/activate ${encodedData}`;
+
+            const modal = document.getElementById('modal');
+            const closeModal = document.getElementById('close');
+            const confirmButton = document.getElementById('confirmButton');
 
             document.getElementById('copyCommandButton').addEventListener('click', function() {
                 navigator.clipboard.writeText(activateCommand)
                     .then(() => {
-                        alert('Команда скопирована в буфер обмена');
+                        modal.style.display = "block";
                     })
                     .catch(err => {
                         console.error('Не удалось скопировать команду: ', err);
                     });
+            });
+
+            closeModal.addEventListener('click', function() {
+                modal.style.display = "none";
+            });
+
+            confirmButton.addEventListener('click', function() {
+                modal.style.display = "none";
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
             });
 
             document.getElementById('openBotButton').addEventListener('click', function() {
